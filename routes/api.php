@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReorderController;
+use App\Http\Controllers\StoreProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,3 +29,7 @@ Route::post('products/{product_id}/reduce-inventory', [ProductController::class,
 // Route::put('reorders/{reorder}/dispatch', [ReorderController::class, 'dispatch']);
 
 Route::post('products/{product_id}/dispatch', [ProductController::class, 'dispatchProduct']);
+
+Route::post('store_products/{store_product}/reduce-inventory', [StoreProductController::class, 'reduceInventory']);
+
+Route::get('store_products', [StoreProductController::class, 'index']);

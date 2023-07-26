@@ -69,6 +69,30 @@ class StoreProductController extends Controller
         return response()->json(['message' => 'Store product updated successfully', 'store_product' => $storeProduct]);
     }
 
+    public function reduceInventory(StoreProduct $storeProduct, Request $request)
+    {
+        $this->validate($request, [
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $quantity = $request->quantity;
+
+        if ($quantity > $storeProduct->inventory) {
+            return response()->json(['message' => 'Insufficient inventory'], 422);
+        }
+
+        $storeProduct->inventory -= $quantity;
+        $storeProduct->save();
+
+        if ($storeProduct->inventory <= 10) {
+            $storeProduct->inventory += 10;
+
+            $storeProduct->save();
+        }
+
+        return response()->json(['message' => 'Inventory reduced successfully', 'store_product' => $storeProduct]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
