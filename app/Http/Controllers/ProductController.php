@@ -63,6 +63,15 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product dispatched successfully']);
     }
 
+    public function processedOrders()
+    {
+        $processedOrders = FulfilledOrder::whereNotNull('order_number')
+            ->with('product:id,name,inventory')
+            ->get(['product_id', 'order_number']);
+
+        return response()->json($processedOrders);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

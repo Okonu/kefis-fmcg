@@ -33,3 +33,5 @@ Route::post('products/{product_id}/dispatch', [ProductController::class, 'dispat
 Route::post('store_products/{store_product}/reduce-inventory', [StoreProductController::class, 'reduceInventory']);
 
 Route::get('store_products', [StoreProductController::class, 'index']);
+
+Route::get('processed_orders', [ProductController::class, 'processedOrders']);
