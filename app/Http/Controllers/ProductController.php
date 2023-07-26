@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\InventoryChangeEvent;
+use App\Models\FulfilledOrder;
 use App\Models\Product;
 use App\Models\StoreProduct;
 use Illuminate\Http\Request;
@@ -50,6 +51,14 @@ class ProductController extends Controller
             'name' => $product->name,
             'inventory' => $product->inventory,
         ]);
+
+        $fulfilledOrder = new FulfilledOrder([
+            'product_id' => $product->id,
+            'status' => 'fulfilled',
+            'order_number' => str_pad(FulfilledOrder::count() + 1, 6, '0', STR_PAD_LEFT),
+        ]);
+
+        $fulfilledOrder->save();
 
         return response()->json(['message' => 'Product dispatched successfully']);
     }
