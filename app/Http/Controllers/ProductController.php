@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\InventoryChangeEvent;
 use App\Models\Product;
+use App\Models\StoreProduct;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -39,6 +40,18 @@ class ProductController extends Controller
             'message' => 'Inventory reduced successfully',
             'product' => $product,
         ]);
+    }
+
+    public function dispatchProduct($product_id)
+    {
+        $product = Product::findOrFail($product_id);
+
+        StoreProduct::create([
+            'name' => $product->name,
+            'inventory' => $product->inventory,
+        ]);
+
+        return response()->json(['message' => 'Product dispatched successfully']);
     }
 
     /**

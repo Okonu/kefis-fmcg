@@ -21,8 +21,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('products', [ProductController::class, 'index']);
-Route::post('products/{product}/reduce-inventory', [ProductController::class, 'reduceInventory']);
+Route::post('products/{product_id}/reduce-inventory', [ProductController::class, 'reduceInventory']);
 // Route::get('reorders', [ReorderController::class, 'index']);
 // Route::post('reorders', [ReorderController::class, 'store']);
 // Route::get('reorders/{reorder}', [ReorderController::class, 'show']);
-Route::put('reorders/{reorder}/dispatch', [ReorderController::class, 'dispatch']);
+// Route::put('reorders/{reorder}/dispatch', [ReorderController::class, 'dispatch']);
+
+Route::post('products/{product_id}/dispatch', [ProductController::class, 'dispatchProduct']);
