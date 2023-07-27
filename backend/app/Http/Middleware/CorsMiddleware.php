@@ -8,7 +8,7 @@ class CorsMiddleware
 {
     public function handle($request, \Closure $next)
     {
-        $allowedOrigins = ['http://your-frontend-app-domain:your-frontend-port'];
+        $allowedOrigins = ['DOMAIN/PORT'];
         $requestOrigin = $request->headers->get('origin');
 
         if (in_array($requestOrigin, $allowedOrigins)) {
