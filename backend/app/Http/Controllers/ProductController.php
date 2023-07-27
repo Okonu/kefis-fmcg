@@ -22,11 +22,11 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Reduce the inventory of a product.
      */
     public function reduceInventory(Request $request, Product $product)
     {
-        $productInventory = intval($product->getAttribute('inventory'));
+        $productInventory = intval($product->inventory);
 
         if ($productInventory === null) {
             return response()->json(['message' => 'Product inventory is not set'], 400);
@@ -37,13 +37,12 @@ class ProductController extends Controller
         ]);
 
         $quantityToReduce = $request->input('quantity');
-        $product->inventory -= $quantityToReduce;
+        $product->decrement('inventory', $quantityToReduce);
 
         if ($product->inventory <= 10) {
             $product->inventory = 10;
+            $product->save();
         }
-
-        $product->save();
 
         event(new InventoryChangeEvent($product, $quantityToReduce));
 
@@ -55,7 +54,9 @@ class ProductController extends Controller
         ]);
     }
 
-
+    /**
+     * Dispatch a product and create a fulfilled order.
+     */
     public function dispatchProduct($product_id)
     {
         $product = Product::findOrFail($product_id);
@@ -76,6 +77,9 @@ class ProductController extends Controller
         return response()->json(['message' => 'Product dispatched successfully']);
     }
 
+    /**
+     * Get a list of processed orders with product details.
+     */
     public function processedOrders()
     {
         $processedOrders = FulfilledOrder::whereNotNull('order_number')
@@ -84,39 +88,5 @@ class ProductController extends Controller
 
         return response()->json($processedOrders);
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
-    {
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Product $product)
-    {
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
-    {
-    }
 }
+
