@@ -13,7 +13,7 @@ Running the application;
 
 #### The endpoints can and should be tested with an API App platform of choice
 ## Endpoints for the application;
-1. {{base_url}}/api/products/{product_id}/dispatch HTTP Method: GET
+1. {{base_url}}/api/products/{product_id}/dispatch HTTP Method: POST
 - dispatches products to the store
 -dispatched products autoincrement in the store table
 2. {{base_url}}/api/processed_orders HTTP Method: GET
