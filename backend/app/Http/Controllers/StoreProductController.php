@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StoreFulfilledOrder;
 use App\Models\StoreProduct;
 use Illuminate\Http\Request;
 
@@ -84,13 +85,22 @@ class StoreProductController extends Controller
         $storeProduct->inventory -= $quantity;
         $storeProduct->save();
 
-        if ($storeProduct->inventory <= 10) {
-            $storeProduct->inventory += 10;
-
-            $storeProduct->save();
+        $fulfilledOrder = null;
+        if ($storeProduct->inventory >= 10) {
+            $orderNumber = ''.str_pad(StoreFulfilledOrder::count() + 1, 6, '0', STR_PAD_LEFT);
+            $fulfilledOrder = StoreFulfilledOrder::create([
+                'product_name' => $storeProduct->name,
+                'quantity' => $quantity,
+                'order_number' => $orderNumber,
+            ]);
         }
 
-        return response()->json(['message' => 'Inventory reduced successfully', 'store_product' => $storeProduct]);
+        return response()->json([
+            'message' => 'Inventory reduced successfully',
+            'store_product' => $storeProduct,
+            'fulfillment_status' => $storeProduct->inventory >= 10 ? 'Fulfilled' : 'Unfulfilled',
+            'fulfillment_details' => $fulfilledOrder,
+        ]);
     }
 
     /**
