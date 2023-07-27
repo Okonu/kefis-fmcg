@@ -7,6 +7,7 @@ use App\Models\FulfilledOrder;
 use App\Models\Product;
 use App\Models\StoreProduct;
 use Illuminate\Http\Request;
+use Brick\Math\BigNumber;
 
 class ProductController extends Controller
 {
@@ -25,12 +26,23 @@ class ProductController extends Controller
      */
     public function reduceInventory(Request $request, Product $product)
     {
+        $productInventory = intval($product->getAttribute('inventory'));
+
+        if ($productInventory === null) {
+            return response()->json(['message' => 'Product inventory is not set'], 400);
+        }
+
         $this->validate($request, [
-            'quantity' => 'required|integer|min:1|max:'.$product->inventory,
+            'quantity' => 'required|integer|min:1|max:'.$productInventory,
         ]);
 
         $quantityToReduce = $request->input('quantity');
         $product->inventory -= $quantityToReduce;
+
+        if ($product->inventory <= 10) {
+            $product->inventory = 10;
+        }
+
         $product->save();
 
         event(new InventoryChangeEvent($product, $quantityToReduce));
@@ -42,6 +54,7 @@ class ProductController extends Controller
             'product' => $product,
         ]);
     }
+
 
     public function dispatchProduct($product_id)
     {
