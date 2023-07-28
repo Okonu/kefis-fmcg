@@ -25,3 +25,7 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::post('/products', [ProductController::class, 'store'])->name('products.store');
 Route::post('/items', [ProductController::class, 'storeItem'])->name('items.store');
 Route::post('/materials', [ProductController::class, 'storeMaterial'])->name('materials.store');
+
+Route::resource('products', ProductController::class);
+Route::delete('items/{itemId}', [ProductController::class, 'deleteItem'])->name('items.destroy');
+Route::delete('materials/{materialId}', [ProductController::class, 'deleteMaterial'])->name('materials.destroy');

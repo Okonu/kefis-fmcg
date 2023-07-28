@@ -58,4 +58,29 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Material added successfully!');
     }
+
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
+
+        $product->delete();
+
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully!');
+    }
+
+    public function deleteItem($itemId)
+    {
+        $item = Item::findOrFail($itemId);
+        $item->delete();
+
+        return redirect()->route('products.index')->with('success', 'Item deleted successfully!');
+    }
+
+    public function deleteMaterial($materialId)
+    {
+        $material = Material::findOrFail($materialId);
+        $material->delete();
+
+        return redirect()->route('products.index')->with('success', 'Material deleted successfully!');
+    }
 }
