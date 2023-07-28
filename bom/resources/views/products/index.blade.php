@@ -2,6 +2,74 @@
 <html>
 <head>
     <title>Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 5px 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            margin-bottom: 15px;
+        }
+
+        ul li ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li ul li {
+            margin-bottom: 5px;
+        }
+
+        strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        h2, h3, h4 {
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        .toggle-list {
+            display: none;
+        }
+
+        .open .toggle-list {
+            display: block;
+        }
+
+        .clickable {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <h1>Products</h1>
@@ -22,17 +90,17 @@
     <h2>Product List</h2>
     <ul>
         @foreach($products as $product)
-            <li>
+            <li class="clickable">
                 <strong>{{ $product->name }}</strong>
 
-                <h3>Items</h3>
-                <ul>
+                <h3 class="clickable">Items</h3>
+                <ul class="toggle-list">
                     @foreach($product->items as $item)
-                        <li>
+                        <li class="clickable">
                             {{ $item->name }}
                             @if($item->materials->count() > 0)
-                                <h4>Materials</h4>
-                                <ul>
+                                <h4 class="clickable">Materials</h4>
+                                <ul class="toggle-list">
                                     @foreach($item->materials as $material)
                                         <li>{{ $material->name }} - Ksh {{ number_format($material->price, 2) }}</li>
                                     @endforeach
@@ -64,5 +132,15 @@
             </li>
         @endforeach
     </ul>
+
+    <script>
+        const clickableElements = document.querySelectorAll('.clickable');
+
+        clickableElements.forEach((element) => {
+            element.addEventListener('click', () => {
+                element.parentNode.classList.toggle('open');
+            });
+        });
+    </script>
 </body>
 </html>
