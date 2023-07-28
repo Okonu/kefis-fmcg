@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Products</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -100,13 +101,15 @@
         .product-card {
             margin: 10px 0;
             padding: 15px;
+            background-color: #fff;
             border: 1px solid #ccc;
             border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.2s ease;
         }
 
         .product-card:hover {
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         }
 
         .item-card {
@@ -115,11 +118,12 @@
             background-color: #f9f9f9;
             border: 1px solid #ccc;
             border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.2s ease;
         }
 
         .item-card:hover {
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
 
         .materials-list {
@@ -149,7 +153,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Products</h1>
+        <h1><i class="fas fa-box"></i>Finished Products</h1>
 
         @if(session('success'))
             <div>{{ session('success') }}</div>
@@ -159,7 +163,7 @@
             @csrf
             <label>Product Name:</label>
             <input type="text" name="name" required>
-            <button type="submit" class="btn">Add Product</button>
+            <button type="submit" class="btn">Add Product <i class="fas fa-plus-circle"></i></button>
         </form>
 
         <hr>
@@ -168,16 +172,16 @@
         <ul>
             @foreach($products as $product)
                 <li class="product-card">
-                    <strong class="clickable">{{ $product->name }}</strong>
+                    <strong class="clickable"><i class="fas fa-box"></i> {{ $product->name }}</strong>
 
-                    <h3 class="clickable">Items</h3>
+                    <h3 class="clickable">Items <i class="fas fa-caret-down rotate-icon"></i></h3>
                     <ul class="toggle-list">
                         @foreach($product->items as $item)
                             <li class="item-card">
-                                <span class="clickable">{{ $item->name }}</span>
+                                <span class="clickable"><i class="fas fa-cube"></i> {{ $item->name }}</span>
                                 <ul class="materials-list toggle-list">
                                     @foreach($item->materials as $material)
-                                        <li>{{ $material->name }} - Ksh {{ number_format($material->price, 2) }}</li>
+                                        <li><i class="fas fa-circle"></i> {{ $material->name }} - Ksh {{ number_format($material->price, 2) }}</li>
                                     @endforeach
                                 </ul>
 
@@ -188,7 +192,7 @@
                                     <input type="text" name="material_name" required>
                                     <label>Price:</label>
                                     <input type="number" name="material_price" step="0.01" required>
-                                    <button type="submit" class="btn">Add</button>
+                                    <button type="submit" class="btn">Add <i class="fas fa-plus-circle"></i></button>
                                 </form>
                             </li>
                         @endforeach
@@ -199,7 +203,7 @@
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <label>Add Item:</label>
                         <input type="text" name="item_name" required>
-                        <button type="submit" class="btn">Add</button>
+                        <button type="submit" class="btn">Add <i class="fas fa-plus-circle"></i></button>
                     </form>
                     
                     <strong>Total Cost:</strong> Ksh {{ number_format($product->getTotalCost(), 2) }}
@@ -208,6 +212,7 @@
         </ul>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <script>
         const clickableElements = document.querySelectorAll('.clickable');
 
