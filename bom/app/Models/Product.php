@@ -15,4 +15,17 @@ class Product extends Model
     {
         return $this->hasMany(Item::class);
     }
+
+    public function getTotalCost()
+    {
+        $totalCost = 0;
+
+        foreach ($this->items as $item) {
+            foreach ($item->materials as $material) {
+                $totalCost += $material->price;
+            }
+        }
+
+        return $totalCost;
+    }
 }
