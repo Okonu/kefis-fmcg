@@ -2,67 +2,60 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
+use App\Models\Material;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $products = Product::all();
+        $products = Product::with('items.materials')->get();
 
         return view('products.index', compact('products'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:products',
         ]);
 
-        Product::create($request->all());
+        Product::create(['name' => $request->name]);
 
-        return redirect()->route('products.index')->with('success', 'Finished Product Added Successfully');
+        return redirect()->route('products.index')->with('success', 'Product added successfully!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
+    public function storeItem(Request $request)
     {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'item_name' => 'required',
+        ]);
+
+        $product = Product::findOrFail($request->product_id);
+        $item = new Item(['name' => $request->item_name]);
+        $product->items()->save($item);
+
+        return redirect()->route('products.index')->with('success', 'Item added successfully!');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
+    public function storeMaterial(Request $request)
     {
-    }
+        $request->validate([
+            'item_id' => 'required|exists:items,id',
+            'material_name' => 'required',
+            'material_price' => 'required|numeric|min:0',
+        ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Product $product)
-    {
-    }
+        $item = Item::findOrFail($request->item_id);
+        $material = new Material([
+            'name' => $request->material_name,
+            'price' => $request->material_price,
+        ]);
+        $item->materials()->save($material);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Product $product)
-    {
+        return redirect()->route('products.index')->with('success', 'Material added successfully!');
     }
 }

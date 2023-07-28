@@ -18,5 +18,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/products', [ProductController::class, 'index'])->name('products');
-Route::post('/products', [ProductController::class, 'store'])->name('products');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+Route::post('/items', [ProductController::class, 'storeItem'])->name('items.store');
+Route::post('/materials', [ProductController::class, 'storeMaterial'])->name('materials.store');
