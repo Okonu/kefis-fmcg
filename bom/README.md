@@ -5,15 +5,23 @@ This is a simple Bill of Materials application.(BOM).
 1. Clone the repository to your local machine:
 2. Navigate to the project directory:
 3. Install the required dependencies using Composer:
-    'composer install'
+    ```
+    composer install
+    ```
 3. Create a new database and update the .env file with your database credentials
 4. Generate the application key:
-    'php artisan key:generate'
+    ```
+    php artisan key:generate
+    ```
 5. Run the database migrations to create the necessary tables:
-    'php artisan migrate'
+    ```
+    php artisan migrate
+    ```
 6. Start the development server:
-    'php artisan serve'
-    The application should now be up and running at http://localhost:8000.
+    ```
+    php artisan serve
+    ```
+- The application should now be up and running at http://localhost:8000.
 
 ## Usage
 - Access the BOM in your web browser by visiting the following route:
