@@ -71,6 +71,8 @@
             text-decoration: underline;
         }
         body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
             background-color: #f9f9f9;
             color: #333;
         }
@@ -153,7 +155,7 @@
 </head>
 <body>
     <div class="container">
-        <h1><i class="fas fa-box"></i>Finished Products</h1>
+        <h1><i class="fas fa-box"></i> Finished Products</h1>
 
         @if(session('success'))
             <div>{{ session('success') }}</div>
@@ -173,12 +175,23 @@
             @foreach($products as $product)
                 <li class="product-card">
                     <strong class="clickable"><i class="fas fa-box"></i> {{ $product->name }}</strong>
+                    <form method="post" action="{{ route('products.destroy', $product->id) }}" style="display: inline-block;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                    </form>
 
                     <h3 class="clickable">Items <i class="fas fa-caret-down rotate-icon"></i></h3>
                     <ul class="toggle-list">
                         @foreach($product->items as $item)
                             <li class="item-card">
                                 <span class="clickable"><i class="fas fa-cube"></i> {{ $item->name }}</span>
+                                <form method="post" action="{{ route('items.destroy', $item->id) }}" style="display: inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-delete"><i class="fas fa-trash"></i></button>
+                                </form>
+
                                 <ul class="materials-list toggle-list">
                                     @foreach($item->materials as $material)
                                         <li><i class="fas fa-circle"></i> {{ $material->name }} - Ksh {{ number_format($material->price, 2) }}</li>
@@ -214,6 +227,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <script>
+        
         const clickableElements = document.querySelectorAll('.clickable');
 
         clickableElements.forEach((element) => {
