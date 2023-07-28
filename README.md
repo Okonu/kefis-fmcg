@@ -1,3 +1,6 @@
+# Tasks
+- Task 02 is accessible in the folder /bom
+
 # kefis-fmcg
 A simple application that tracks inventory and makes automated reorders to their off-site warehouse when the stock level hits a predefined quantity.
 ## Getting Started
