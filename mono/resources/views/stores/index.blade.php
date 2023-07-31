@@ -126,7 +126,7 @@
             const storeProductsData = await fetchStoreProducts();
             populateStoreProductsTable(storeProductsData);
 
-            // populateFulfilledOrdersTable({}); 
+            // populateFulfilledOrdersTable({});
 
         });
     </script>
