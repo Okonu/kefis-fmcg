@@ -1,5 +1,7 @@
 # Tasks
-- Task 02 is accessible in the folder /bom
+- Task 00 is KEFIS-FMCG accessible in the folder /kefis
+- Task 01 is BOM accessible in the folder /bom
+- Task 02 is KEFIS-Monolith accessible in the folder /mono
 
 # kefis-fmcg
 A simple application that tracks inventory and makes automated reorders to their off-site warehouse when the stock level hits a predefined quantity.
