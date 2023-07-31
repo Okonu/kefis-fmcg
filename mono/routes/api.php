@@ -20,18 +20,17 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-// Route::middleware('cors')->group(function () {
+Route::middleware('cors')->group(function () {
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('products', [ProductController::class, 'show'])->name('api.products');
 
-Route::get('products', [ProductController::class, 'index'])->name('products.index');
-Route::get('products', [ProductController::class, 'show'])->name('api.products');
+    Route::post('products/{product_id}/reduce-inventory', [ProductController::class, 'reduceInventory']);
 
-Route::post('products/{product_id}/reduce-inventory', [ProductController::class, 'reduceInventory']);
+    Route::post('products/{product_id}/dispatch', [ProductController::class, 'dispatchProduct']);
 
-Route::post('products/{product_id}/dispatch', [ProductController::class, 'dispatchProduct']);
+    Route::post('store_products/{store_product}/reduce-inventory', [StoreProductController::class, 'reduceInventory']);
 
-Route::post('store_products/{store_product}/reduce-inventory', [StoreProductController::class, 'reduceInventory']);
+    Route::get('store_products', [StoreProductController::class, 'show']);
 
-Route::get('store_products', [StoreProductController::class, 'index']);
-
-Route::get('processed_orders', [ProductController::class, 'processedOrders']);
-// });
+    Route::get('processed_orders', [ProductController::class, 'processedOrders']);
+});

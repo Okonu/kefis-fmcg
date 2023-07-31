@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreProductController;
 use App\Models\Product;
+use App\Models\StoreFulfilledOrder;
 use App\Models\StoreProduct;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,9 @@ Route::get('/', function () {
 Route::get('/store', function () {
     $storeProducts = StoreProduct::all();
 
-    return view('stores.index', compact('storeProducts'));
+    $fulfilledOrders = StoreFulfilledOrder::all();
+
+    return view('stores.index', compact('storeProducts', 'fulfilledOrders'));
 });
 
 Route::get('/orders', function () {

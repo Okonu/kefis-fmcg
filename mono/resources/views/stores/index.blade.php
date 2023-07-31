@@ -1,65 +1,80 @@
 @extends('layouts.app')
+
 @section('content')
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-                    <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-                        For more information about DataTables, please visit the <a target="_blank"
-                            href="https://datatables.net">official DataTables documentation</a>.</p>
+        <!-- Page Heading -->
+        <h1 class="h3 mb-2 text-gray-800">Tables</h1>
+        <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
+            For more information about DataTables, please visit the <a target="_blank"
+                href="https://datatables.net">official DataTables documentation</a>.</p>
 
-                   <!-- Store Products Table -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Store Products</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="storeProductsTable" class="table table-bordered" width="100%" cellspacing="0">
-                            <thead>
+        <!-- Store Products Table -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Store Products</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="storeProductsTable" class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Inventory</th>
+                                <th>Sale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($storeProducts as $product)
                                 <tr>
-                                    <th>Product Name</th>
-                                    <th>Inventory</th>
-                                    <th>Sale</th>
+                                    <td>{{ $product->name }}</td>
+                                    <td>{{ $product->inventory }}</td>
+                                    <td>
+                                        <button class="btn btn-warning" onclick="reduceInventory({{ $product->id }}, 1)">Sale</button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
 
-            <!-- Fulfilled Orders Table -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Fulfilled Orders</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="fulfilledOrdersTable" class="table table-bordered" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th>Quantity</th>
-                                    <th>Order Number</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                        </div>
-                    </div>
-
-                </div>
-                <!-- /.container-fluid -->
-
+        <!-- Fulfilled Orders Table -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Fulfilled Orders</h6>
             </div>
-            <!-- End of Main Content -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="fulfilledOrdersTable" class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Quantity</th>
+                                <th>Order Number</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($fulfilledOrders as $order)
+                                <tr>
+                                    <td>{{ $order->product_name }}</td>
+                                    <td>{{ $order->quantity }}</td>
+                                    <td>{{ $order->order_number }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.container-fluid -->
+
+    </div>
+    <!-- End of Main Content -->
 
     <script>
         async function fetchStoreProducts() {
@@ -74,72 +89,45 @@
         }
 
         async function reduceInventory(storeProduct_id, quantity) {
-        try {
-            const response = await fetch(`/store_products/${storeProduct_id}/reduce-inventory`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    quantity: quantity
-                })
-            });
-            const data = await response.json();
-            console.log(data.message);
-            return data;
-        } catch (error) {
-            console.error('Error reducing inventory:', error);
-            return null;
-        }
-    }
+            try {
+                const response = await fetch(`/store_products/${storeProduct_id}/reduce-inventory`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        quantity: quantity
+                    })
+                });
+                const data = await response.json();
+                console.log(data.message);
 
-        function populateStoreProductsTable(data) {
-        const tableBody = document.getElementById('storeProductsTable').getElementsByTagName('tbody')[0];
+                const storeProductsTable = document.getElementById('storeProductsTable').getElementsByTagName('tbody')[0];
+                const rowToUpdate = storeProductsTable.querySelector(`tr[data-product-id="${storeProduct_id}"]`);
+                rowToUpdate.cells[1].innerText = data.store_product.inventory;
 
-        data.forEach(product => {
-                const row = tableBody.insertRow();
-                const productNameCell = row.insertCell();
-                const inventoryCell = row.insertCell();
-                const saleCell = row.insertCell();
+                if (data.fulfillment_details) {
+                    const fulfilledOrdersTable = document.getElementById('fulfilledOrdersTable').getElementsByTagName('tbody')[0];
+                    const newRow = fulfilledOrdersTable.insertRow();
+                    const productNameCell = newRow.insertCell();
+                    const quantityCell = newRow.insertCell();
+                    const orderNumberCell = newRow.insertCell();
 
-                productNameCell.innerText = product.name;
-                inventoryCell.innerText = product.inventory;
-
-                const saleButton = document.createElement('button');
-            saleButton.textContent = 'Sale';
-            saleButton.classList.add('btn', 'btn-warning');
-            saleButton.addEventListener('click', async () => {
-                const response = await reduceInventory(product.id, 1);
-                if (response) {
-                    updateFulfilledOrdersTable(response);
+                    productNameCell.innerText = data.fulfillment_details.product_name;
+                    quantityCell.innerText = data.fulfillment_details.quantity;
+                    orderNumberCell.innerText = data.fulfillment_details.order_number;
                 }
-            });
-            saleCell.appendChild(saleButton);
-        });
-    }
-
-        function populateFulfilledOrdersTable(data) {
-            const tableBody = document.getElementById('fulfilledOrdersTable').getElementsByTagName('tbody')[0];
-            tableBody.innerHTML = '';
-
-            if (data.fulfillment_details) {
-                const row = tableBody.insertRow();
-                const productNameCell = row.insertCell();
-                const quantityCell = row.insertCell();
-                const orderNumberCell = row.insertCell();
-
-                productNameCell.innerText = data.fulfillment_details.product_name;
-                quantityCell.innerText = data.fulfillment_details.quantity;
-                orderNumberCell.innerText = data.fulfillment_details.order_number;
+            } catch (error) {
+                console.error('Error reducing inventory:', error);
             }
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
             const storeProductsData = await fetchStoreProducts();
             populateStoreProductsTable(storeProductsData);
-            
-            populateFulfilledOrdersTable({});
+
+            // populateFulfilledOrdersTable({}); 
+
         });
     </script>
-    @endsection
-  
+@endsection
