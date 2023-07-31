@@ -76,24 +76,23 @@ class StoreProductController extends Controller
             'quantity' => 'required|integer|min:1',
         ]);
 
-        $quantity = $request->quantity;
-
-        if ($quantity > $storeProduct->inventory) {
-            return response()->json(['message' => 'Insufficient inventory'], 422);
-        }
-
-        $storeProduct->inventory -= $quantity;
-        $storeProduct->save();
+        $quantityToReduce = $request->input('quantity');
+        $storeProduct->inventory -= $quantityToReduce;
 
         $fulfilledOrder = null;
         if ($storeProduct->inventory >= 10) {
             $orderNumber = ''.str_pad(StoreFulfilledOrder::count() + 1, 6, '0', STR_PAD_LEFT);
             $fulfilledOrder = StoreFulfilledOrder::create([
                 'product_name' => $storeProduct->name,
-                'quantity' => $quantity,
+                'quantity' => $quantityToReduce,
                 'order_number' => $orderNumber,
             ]);
         }
+
+        $reorderQuantity = 50;
+        $storeProduct->inventory = max(10, $storeProduct->inventory + $reorderQuantity);
+
+        $storeProduct->save();
 
         return response()->json([
             'message' => 'Inventory reduced successfully',
