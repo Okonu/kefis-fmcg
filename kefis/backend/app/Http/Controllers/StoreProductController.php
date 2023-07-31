@@ -89,7 +89,7 @@ class StoreProductController extends Controller
             ]);
         }
 
-        $reorderQuantity = 20;
+        $reorderQuantity = 50;
         $storeProduct->inventory = max(10, $storeProduct->inventory + $reorderQuantity);
 
         $storeProduct->save();
