@@ -1,0 +1,1 @@
+<?php /**PATH C:\Users\Boost Your Business\Desktop\value8\kefis\mono\resources\views/layouts/master.blade.php ENDPATH**/ ?>
