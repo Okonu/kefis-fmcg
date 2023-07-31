@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::middleware('cors')->group(function () {
+// Route::middleware('cors')->group(function () {
 
 Route::get('products', [ProductController::class, 'index'])->name('products.index');
 Route::get('products', [ProductController::class, 'show'])->name('api.products');
@@ -34,4 +34,4 @@ Route::post('store_products/{store_product}/reduce-inventory', [StoreProductCont
 Route::get('store_products', [StoreProductController::class, 'index']);
 
 Route::get('processed_orders', [ProductController::class, 'processedOrders']);
-});
+// });

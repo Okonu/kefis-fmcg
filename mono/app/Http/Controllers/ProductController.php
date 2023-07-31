@@ -88,10 +88,12 @@ class ProductController extends Controller
         return response()->json($processedOrders);
     }
 
-    // public function show()
-    // {
-    //     $products = Product::with('fulfilledOrders')->get();
+    public function show(Request $request)
+    {
+        $products = Product::with('fulfilledOrders')->get();
 
-    //     return view('products.index', compact('products'));
-    // }
+        $data = ['products' => $products];
+
+        return response()->json($data);
+    }
 }
