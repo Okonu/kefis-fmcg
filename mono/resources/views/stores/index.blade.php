@@ -25,15 +25,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($storeProducts as $product)
-                                <tr>
-                                    <td>{{ $product->name }}</td>
-                                    <td>{{ $product->inventory }}</td>
-                                    <td>
-                                        <button class="btn btn-warning" onclick="reduceInventory({{ $product->id }}, 1)">Sale</button>
-                                    </td>
-                                </tr>
-                            @endforeach
+                        
                         </tbody>
                     </table>
                 </div>
@@ -55,14 +47,8 @@
                                 <th>Order Number</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach ($fulfilledOrders as $order)
-                                <tr>
-                                    <td>{{ $order->product_name }}</td>
-                                    <td>{{ $order->quantity }}</td>
-                                    <td>{{ $order->order_number }}</td>
-                                </tr>
-                            @endforeach
+                        <tbody id="orderData">
+                           
                         </tbody>
                     </table>
                 </div>
@@ -74,59 +60,72 @@
 
     </div>
     <!-- End of Main Content -->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const storeProductsTable = document.getElementById('storeProductsTable');
+        const fulfilledOrdersTable = document.getElementById('fulfilledOrdersTable');
+        
+        fetchData();
 
-    <script>
-        async function fetchStoreProducts() {
-            try {
-                const response = await fetch("/store_products");
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('Error fetching store products:', error);
-                return [];
-            }
+        function fetchData() {
+            fetch("{{ route('store-products') }}")
+                .then(response => response.json())
+                .then(data => {
+                    populateStoreProductsTable(data.storeProducts);
+                    populateFulfilledOrdersTable(data.fulfilledOrders);
+                })
+                .catch(error => console.error("Error fetching data:", error));
         }
 
-        async function reduceInventory(storeProduct_id, quantity) {
+        function populateStoreProductsTable(storeProducts) {
+            storeProductsTable.innerHTML = ''; 
+
+            storeProducts.forEach(product => {
+                const row = storeProductsTable.insertRow();
+                row.innerHTML = `<td>${product.name}</td><td>${product.inventory}</td><td><button class="sale-button" data-product-id="${product.id}">Sale</button></td>`;
+            });
+
+            const saleButtons = document.querySelectorAll('.sale-button');
+            saleButtons.forEach(button => {
+                button.addEventListener('click', handleSaleButtonClick);
+            });
+        }
+
+        async function handleSaleButtonClick(event) {
+            const productID = event.target.getAttribute('data-product-id');
+            const quantity = 1; 
+
             try {
-                const response = await fetch(`/store_products/${storeProduct_id}/reduce-inventory`, {
+                const response = await fetch(`/store_products/${productID}/reduce-inventory`, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                     body: JSON.stringify({
                         quantity: quantity
                     })
                 });
+
                 const data = await response.json();
                 console.log(data.message);
 
-                const storeProductsTable = document.getElementById('storeProductsTable').getElementsByTagName('tbody')[0];
-                const rowToUpdate = storeProductsTable.querySelector(`tr[data-product-id="${storeProduct_id}"]`);
-                rowToUpdate.cells[1].innerText = data.store_product.inventory;
-
-                if (data.fulfillment_details) {
-                    const fulfilledOrdersTable = document.getElementById('fulfilledOrdersTable').getElementsByTagName('tbody')[0];
-                    const newRow = fulfilledOrdersTable.insertRow();
-                    const productNameCell = newRow.insertCell();
-                    const quantityCell = newRow.insertCell();
-                    const orderNumberCell = newRow.insertCell();
-
-                    productNameCell.innerText = data.fulfillment_details.product_name;
-                    quantityCell.innerText = data.fulfillment_details.quantity;
-                    orderNumberCell.innerText = data.fulfillment_details.order_number;
-                }
+                fetchData();
             } catch (error) {
                 console.error('Error reducing inventory:', error);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const storeProductsData = await fetchStoreProducts();
-            populateStoreProductsTable(storeProductsData);
+        function populateFulfilledOrdersTable(fulfilledOrders) {
+            fulfilledOrdersTable.innerHTML = '';
 
-            // populateFulfilledOrdersTable({});
+            fulfilledOrders.forEach(order => {
+                const row = fulfilledOrdersTable.insertRow();
+                row.innerHTML = `<td>${order.product_name}</td><td>${order.quantity}</td><td>${order.order_number}</td>`;
+            });
+        }
 
-        });
-    </script>
+    });
+
+</script>
 @endsection
