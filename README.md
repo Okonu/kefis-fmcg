@@ -1,4 +1,4 @@
-# Tasks
+# This is a set of interview projects at a third-level interview stage done in July 2023
 - Task 00 is KEFIS-FMCG accessible in the folder /kefis
 - Task 01 is BOM accessible in the folder /bom
 - Task 02 is KEFIS-Monolith accessible in the folder /mono
